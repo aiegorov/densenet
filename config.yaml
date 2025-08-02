@@ -1,0 +1,21 @@
+# DenseNet Configuration
+model:
+  name: "DenseNet"
+  num_classes: 1000
+  growth_rate: 32
+  block_config: [6, 12, 24, 16]  # DenseNet-121 configuration
+  num_init_features: 64
+  drop_rate: 0.0
+
+# Training/Inference settings
+inference:
+  device: "cuda"  # or "cpu"
+  batch_size: 1
+  image_size: [224, 224]
+  mean: [0.485, 0.456, 0.406]
+  std: [0.229, 0.224, 0.225]
+
+# Model weights path (if loading pre-trained)
+weights:
+  path: "densenet_weights.pth"
+  load_pretrained: false 
