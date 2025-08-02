@@ -1,21 +1,18 @@
-# DenseNet Configuration
+# DenseNet Configuration for torchvision models
 model:
-  name: "DenseNet"
+  name: "densenet121"  # Options: densenet121, densenet169, densenet201, densenet161
   num_classes: 1000
-  growth_rate: 32
-  block_config: [6, 12, 24, 16]  # DenseNet-121 configuration
-  num_init_features: 64
-  drop_rate: 0.0
+  pretrained: true  # Use ImageNet pre-trained weights
 
 # Training/Inference settings
 inference:
   device: "cuda"  # or "cpu"
   batch_size: 1
   image_size: [224, 224]
-  mean: [0.485, 0.456, 0.406]
-  std: [0.229, 0.224, 0.225]
+  mean: [0.485, 0.456, 0.406]  # ImageNet normalization
+  std: [0.229, 0.224, 0.225]   # ImageNet normalization
 
-# Model weights path (if loading pre-trained)
+# Model weights path (if loading custom weights)
 weights:
-  path: "densenet_weights.pth"
-  load_pretrained: false 
+  path: "custom_densenet_weights.pth"
+  load_pretrained: false  # Set to true to load custom weights instead of torchvision pretrained 

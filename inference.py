@@ -1,11 +1,10 @@
 import yaml
 import torch
 import torch.nn as nn
-from torchvision import transforms
+from torchvision import transforms, models
 from PIL import Image
 import argparse
 import os
-from model import DenseNet
 
 def load_config(config_path):
     """Load configuration from YAML file."""
@@ -17,12 +16,29 @@ def initialize_model(config):
     """Initialize DenseNet model with configuration."""
     model_config = config['model']
     
-    # Create model instance
-    model = DenseNet(model_config)
+    # Use torchvision's pre-trained DenseNet
+    model_name = model_config.get('name', 'densenet121').lower()
     
-    # Load pre-trained weights if specified
+    if model_name == 'densenet121':
+        model = models.densenet121(pretrained=model_config.get('pretrained', False))
+    elif model_name == 'densenet169':
+        model = models.densenet169(pretrained=model_config.get('pretrained', False))
+    elif model_name == 'densenet201':
+        model = models.densenet201(pretrained=model_config.get('pretrained', False))
+    elif model_name == 'densenet161':
+        model = models.densenet161(pretrained=model_config.get('pretrained', False))
+    else:
+        raise ValueError(f"Unsupported model: {model_name}")
+    
+    # Modify the classifier if num_classes is different from default (1000)
+    num_classes = model_config.get('num_classes', 1000)
+    if num_classes != 1000:
+        in_features = model.classifier.in_features
+        model.classifier = nn.Linear(in_features, num_classes)
+    
+    # Load custom weights if specified
     if config['weights']['load_pretrained'] and os.path.exists(config['weights']['path']):
-        print(f"Loading pre-trained weights from {config['weights']['path']}")
+        print(f"Loading custom weights from {config['weights']['path']}")
         model.load_state_dict(torch.load(config['weights']['path'], map_location='cpu'))
     
     # Set device
